@@ -1,0 +1,5 @@
+layout-module:
+  bin: layout-module
+  version: 0.0.1
+  type: layout
+  enable: true
