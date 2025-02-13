@@ -10,9 +10,11 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "mini-backup",
-	Short: "Un outil CLI pour gérer les backups MySQL",
-	Long:  `Un module CLI basé sur Cobra.`,
+	Use:   "module-mysql-mb",
+	Short: "Module MySQL pour MiniBackup",
+	Long: `
+	Ce module permet de gérer les backups et la restauration.
+	`,
 }
 
 func main() {

@@ -9,7 +9,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// BackupCmd crée la commande CLI pour le backup MySQL
 func BackupCmd() *cobra.Command {
 	var argsJSON string
 
@@ -21,18 +20,31 @@ func BackupCmd() *cobra.Command {
 			name := args[0]
 			argsJSON = args[1]
 
+			loggerModule := utils.NewModuleLogger()
+			loggerModule.AddInfo(fmt.Sprintf("Démarrage du backup pour %s", name))
+
 			var backupArgs utils.BackupArgs
 			err := json.Unmarshal([]byte(argsJSON), &backupArgs)
 			if err != nil {
+				loggerModule.AddError(fmt.Sprintf("Erreur de parsing JSON: %v", err))
 				log.Fatalf("❌ Erreur de parsing JSON: %v", err)
 			}
+			loggerModule.AddInfo("Arguments de backup parsés avec succès.")
 
 			result, err := utils.BackupMySQL(name, backupArgs)
 			if err != nil {
+				loggerModule.AddError(fmt.Sprintf("Erreur lors du backup : %v", err))
 				log.Fatalf("❌ Erreur lors du backup : %v", err)
 			}
+			loggerModule.AddInfo("Backup MySQL exécuté avec succès.")
 
-			fmt.Println("✅ Backup réussi:", result)
+			loggerModule.SetResult(result)
+
+			jsonOutput, err := loggerModule.JSON()
+			if err != nil {
+				log.Fatalf("Erreur lors de la sérialisation du logger en JSON: %v", err)
+			}
+			fmt.Println(jsonOutput)
 		},
 	}
 

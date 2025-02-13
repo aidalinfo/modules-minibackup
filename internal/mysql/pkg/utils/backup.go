@@ -13,6 +13,8 @@ func BackupMySQL(name string, config BackupArgs) ([]string, error) {
 	if config.Mysql.Host == "" || config.Mysql.User == "" {
 		return []string{}, fmt.Errorf("invalid MySQL configuration: missing required fields (Host: %s, User: %s)", config.Mysql.Host, config.Mysql.User)
 	}
+	// fmt.Printf("Starting backup for %s\n", name)
+	// fmt.Printf("Using MySQL configuration: %+v\n", config)
 
 	// Format de la date pour nommer le dossier de backup
 	date := time.Now().Format("20060102_150405")
@@ -76,7 +78,7 @@ func dumpAllDatabases(name string, config BackupArgs, outputFile string) (string
 		return "", fmt.Errorf("mysqldump failed for all databases: %w", err)
 	}
 
-	fmt.Printf("Backup for all databases saved to %s\n", outputFile)
+	// fmt.Printf("Backup for all databases saved to %s\n", outputFile)
 	return outputFile, nil
 }
 
@@ -106,6 +108,6 @@ func dumpFunc(name string, config BackupArgs, database, outputFile string) (stri
 		return "", fmt.Errorf("mysqldump failed for database %s: %w", database, err)
 	}
 
-	fmt.Printf("Backup saved to %s\n", outputFile)
+	// fmt.Printf("Backup saved to %s\n", outputFile)
 	return outputFile, nil
 }

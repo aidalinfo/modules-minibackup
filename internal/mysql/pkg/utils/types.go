@@ -2,8 +2,8 @@ package utils
 
 type BackupArgs struct {
 	Mysql       *Mysql `json:"mysql,omitempty"`
-	Path        string `json:"path"`
-	GlacierMode bool
+	Path        string `json:"path,omitempty"`
+	GlacierMode bool   `json:"Glaciermode,omitempty"`
 }
 
 type Mysql struct {
