@@ -1,0 +1,11 @@
+{
+  "official": {
+    "mysql": {
+      "version": "0.0.1",
+      "type": "mysql",
+      "path": "modules/official/mysql/mysql.md"
+    }
+  },
+  "community": {},
+  "collections": {}
+}
