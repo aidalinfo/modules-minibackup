@@ -3,3 +3,6 @@ mysql:
   version: 0.0.1
   type: mysql
   enable: true
+  metadata:
+    author: Ninapepite
+    description: Module de sauvegarde MySQL
