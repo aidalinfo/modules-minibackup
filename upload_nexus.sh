@@ -124,9 +124,12 @@ process_module() {
     if [[ $? -eq 0 ]]; then
         echo "✅ Upload réussi pour $name ($version)"
         
-        # Mettre à jour le fichier .versions.json
-        jq --arg name "$name" --arg version "$version" \
-            '.[$name] = { "version": $version }' "$VERSIONS_FILE" > "${VERSIONS_FILE}.tmp"
+        # Calculer le SHA256 du fichier ZIP
+        sha=$(sha256sum "$zip_file" | awk '{print $1}')
+        
+        # Mettre à jour le fichier .versions.json avec la version et le SHA
+        jq --arg name "$name" --arg version "$version" --arg sha "$sha" \
+            '.[$name] = { "version": $version, "sha": $sha }' "$VERSIONS_FILE" > "${VERSIONS_FILE}.tmp"
 
         mv "${VERSIONS_FILE}.tmp" "$VERSIONS_FILE"
         echo "✅ Fichier .versions.json mis à jour avec succès !"
@@ -134,6 +137,7 @@ process_module() {
     else
         echo "❌ Échec de l'upload pour $name"
     fi
+
 }
 
 # Parcours des modules dans les catégories official, community, collections

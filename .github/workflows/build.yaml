@@ -41,10 +41,11 @@ jobs:
                --upload-file .index.json \
                "https://pkg.aidalinfo.fr/repository/minibackup-modules/index.json"
         
-      - name: Commit du nouveau fichier .index.json sur GitHub
+      - name: Commit du nouveau fichier .index.json et .versions.json sur GitHub
         uses: EndBug/add-and-commit@v9
         with:
           author_name: 'GitHub Actions'
           author_email: 'actions@github.com'
-          message: 'Mise à jour de .index.json [skip ci]'
-          add: '.index.json'
+          message: 'Mise à jour de .index.json et .versions.json [skip ci]'
+          add: '.index.json .versions.json'
+
