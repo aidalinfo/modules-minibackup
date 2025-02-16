@@ -31,14 +31,6 @@ jobs:
 
       - name: Exécution du script de génération de l'index
         run: ./generate_index.sh
-        
-      - name: Commit du nouveau fichier .index.json sur GitHub
-        uses: EndBug/add-and-commit@v9
-        with:
-          author_name: 'GitHub Actions'
-          author_email: 'actions@github.com'
-          message: 'Mise à jour de .index.json [skip ci]'
-          add: '.index.json'
 
       - name: Exécution du script d'upload des modules
         run: ./upload_nexus.sh
@@ -48,4 +40,11 @@ jobs:
           curl -u "${{ secrets.NEXUS_USERNAME }}:${{ secrets.NEXUS_PASSWORD }}" \
                --upload-file .index.json \
                "https://pkg.aidalinfo.fr/repository/minibackup-modules/index.json"
-
+        
+      - name: Commit du nouveau fichier .index.json sur GitHub
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: 'GitHub Actions'
+          author_email: 'actions@github.com'
+          message: 'Mise à jour de .index.json [skip ci]'
+          add: '.index.json'
