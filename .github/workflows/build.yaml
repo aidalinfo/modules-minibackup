@@ -27,10 +27,10 @@ jobs:
           go-version: '1.23.5' 
 
       - name: Rendre les scripts exécutables
-        run: chmod +x ./scripts/generate_index.sh ./scripts/upload_modules.sh
+        run: chmod +x ./generate_index.sh ./upload_modules.sh
 
       - name: Exécution du script de génération de l'index
-        run: ./scripts/generate_index.sh
+        run: ./generate_index.sh
         
       - name: Commit du nouveau fichier .index.json sur GitHub
         uses: EndBug/add-and-commit@v9
