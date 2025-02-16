@@ -41,7 +41,7 @@ jobs:
           add: '.index.json'
 
       - name: Exécution du script d'upload des modules
-        run: ./scripts/upload_nexus.sh
+        run: ./upload_nexus.sh
 
       - name: Upload du fichier .index.json vers Nexus
         run: |
