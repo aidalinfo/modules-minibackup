@@ -1,7 +1,7 @@
 {
   "official": {
     "mysql": {
-      "version": "0.0.1",
+      "version": "0.9.0",
       "type": "mysql",
       "path": "modules/official/mysql/mysql.md",
       "metadata": {
