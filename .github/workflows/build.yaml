@@ -1,0 +1,51 @@
+name: Module Workflow
+
+on:
+  push:
+    branches: main
+  workflow_dispatch:
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    env:
+      # Remplacez ces valeurs par vos secrets GitHub pour plus de sécurité
+      NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+      NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+    steps:
+      - name: Checkout du dépôt
+        uses: actions/checkout@v2
+
+      - name: Installation des dépendances
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq zip
+
+      - name: Configuration de l'environnement Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.23.5' 
+
+      - name: Rendre les scripts exécutables
+        run: chmod +x ./scripts/generate_index.sh ./scripts/upload_modules.sh
+
+      - name: Exécution du script de génération de l'index
+        run: ./scripts/generate_index.sh
+        
+      - name: Commit du nouveau fichier .index.json sur GitHub
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: 'GitHub Actions'
+          author_email: 'actions@github.com'
+          message: 'Mise à jour de .index.json [skip ci]'
+          add: '.index.json'
+
+      - name: Exécution du script d'upload des modules
+        run: ./scripts/upload_modules.sh
+
+      - name: Upload du fichier .index.json vers Nexus
+        run: |
+          curl -u "${{ secrets.NEXUS_USERNAME }}:${{ secrets.NEXUS_PASSWORD }}" \
+               --upload-file .index.json \
+               "https://pkg.aidalinfo.fr/repository/minibackup-modules/index.json"
+

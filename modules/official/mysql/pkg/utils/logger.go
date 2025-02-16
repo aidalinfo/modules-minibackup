@@ -27,19 +27,21 @@ func NewModuleLogger() *ModuleLogger {
 	}
 }
 
-func (ml *ModuleLogger) AddError(message string) {
+func (ml *ModuleLogger) Error(message string) {
 	ts := time.Now().Format(time.RFC3339)
+	// fmt.Println(fmt.Sprintf("%s ERROR: %s", ts, message))
 	ml.Logs.Error = append(ml.Logs.Error, fmt.Sprintf("%s ERROR: %s", ts, message))
 }
 
-func (ml *ModuleLogger) AddInfo(message string) {
+func (ml *ModuleLogger) Info(message string) {
 	ts := time.Now().Format(time.RFC3339)
+	// fmt.Println(fmt.Sprintf("%s INFO: %s", ts, message))
 	ml.Logs.Info = append(ml.Logs.Info, fmt.Sprintf("%s INFO: %s", ts, message))
 }
 
-// AddDebug ajoute un message de debug avec timestamp.
-func (ml *ModuleLogger) AddDebug(message string) {
+func (ml *ModuleLogger) Debug(message string) {
 	ts := time.Now().Format(time.RFC3339)
+	// fmt.Println(fmt.Sprintf("%s DEBUG: %s", ts, message))
 	ml.Logs.Debug = append(ml.Logs.Debug, fmt.Sprintf("%s DEBUG: %s", ts, message))
 }
 

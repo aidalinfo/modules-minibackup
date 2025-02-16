@@ -1,5 +1,8 @@
 mysql:
-  bin: module-mysql
-  version: 0.0.1
+  bin: module-mysql-mb
+  version: 0.9.0
   type: mysql
   enable: true
+  metadata:
+    author: Ninapepite
+    description: Module de sauvegarde MySQL

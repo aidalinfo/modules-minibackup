@@ -21,22 +21,21 @@ func BackupCmd() *cobra.Command {
 			argsJSON = args[1]
 
 			loggerModule := utils.NewModuleLogger()
-			loggerModule.AddInfo(fmt.Sprintf("Démarrage du backup pour %s", name))
+			loggerModule.Info(fmt.Sprintf("Démarrage du backup pour %s", name))
 
 			var backupArgs utils.BackupArgs
 			err := json.Unmarshal([]byte(argsJSON), &backupArgs)
 			if err != nil {
-				loggerModule.AddError(fmt.Sprintf("Erreur de parsing JSON: %v", err))
-				log.Fatalf("❌ Erreur de parsing JSON: %v", err)
+				loggerModule.Error(fmt.Sprintf("Erreur de parsing JSON: %v", err))
 			}
-			loggerModule.AddInfo("Arguments de backup parsés avec succès.")
+			loggerModule.Info("Arguments de backup parsés avec succès.")
 
-			result, err := utils.BackupMySQL(name, backupArgs)
+			result, err := utils.BackupMySQL(name, backupArgs, loggerModule)
 			if err != nil {
-				loggerModule.AddError(fmt.Sprintf("Erreur lors du backup : %v", err))
+				loggerModule.Error(fmt.Sprintf("Erreur lors du backup : %v", err))
 				log.Fatalf("❌ Erreur lors du backup : %v", err)
 			}
-			loggerModule.AddInfo("Backup MySQL exécuté avec succès.")
+			loggerModule.Info("Backup MySQL exécuté avec succès.")
 
 			loggerModule.SetResult(result)
 

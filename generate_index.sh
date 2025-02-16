@@ -30,6 +30,14 @@ extract_module_name() {
     awk -F ':' '/^[a-zA-Z0-9_-]+:/ {print $1; exit}' "$file" | tr -d ' '
 }
 
+# Fonction pour extraire toutes les clés sous metadata en JSON
+extract_metadata() {
+    local file=$1
+    awk '/^ *metadata:/,/^[^ ]/{if ($1 !~ /metadata:/) print}' "$file" |
+        sed -E 's/^[ ]+([^:]+):[ ]*(.*)$/"\1": "\2",/' |
+        tr -d '\n' | sed 's/,$//'
+}
+
 # Fonction pour parcourir les modules et remplir le JSON
 process_modules() {
     local category=$1
@@ -44,20 +52,32 @@ process_modules() {
             local yaml_file="$module_dir/module.yaml"
 
             if [[ -f "$yaml_file" ]]; then
-                local name version type
+                local name version type metadata_json
                 name=$(extract_module_name "$yaml_file")
                 version=$(extract_yaml_value "version" "$yaml_file")
                 type=$(extract_yaml_value "type" "$yaml_file")
-                
+                metadata_json=$(extract_metadata "$yaml_file")
+
                 local md_file="$module_dir/$name.md"
                 if [[ -f "$md_file" && -n "$name" && -n "$version" && -n "$type" ]]; then
                     local path="modules/$category/$(basename "$module_dir")/$(basename "$md_file")"
-                    INDEX_JSON=$(echo "$INDEX_JSON" | jq --arg name "$name" \
-                                                          --arg version "$version" \
-                                                          --arg type "$type" \
-                                                          --arg path "$path" \
-                                                          --arg category "$category" \
-                                                          '.[$category][$name] = { "version": $version, "type": $type, "path": $path }')
+                    
+                    if [[ -n "$metadata_json" ]]; then
+                        INDEX_JSON=$(echo "$INDEX_JSON" | jq --arg category "$category" \
+                                                              --arg name "$name" \
+                                                              --arg version "$version" \
+                                                              --arg type "$type" \
+                                                              --arg path "$path" \
+                                                              --argjson metadata "{$metadata_json}" \
+                                                              '.[$category][$name] = { "version": $version, "type": $type, "path": $path, "metadata": $metadata }')
+                    else
+                        INDEX_JSON=$(echo "$INDEX_JSON" | jq --arg category "$category" \
+                                                              --arg name "$name" \
+                                                              --arg version "$version" \
+                                                              --arg type "$type" \
+                                                              --arg path "$path" \
+                                                              '.[$category][$name] = { "version": $version, "type": $type, "path": $path, "metadata": {} }')
+                    fi
                 fi
             fi
         fi
