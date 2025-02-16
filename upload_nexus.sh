@@ -2,8 +2,6 @@
 
 # Configuration de Nexus Repository
 NEXUS_URL="https://pkg.aidalinfo.fr/repository/minibackup-modules"
-NEXUS_USERNAME="uploader"  
-NEXUS_PASSWORD="" 
 
 # Définition du répertoire des modules
 BASE_DIR="$(dirname "$(realpath "$0")")"
@@ -40,10 +38,19 @@ get_local_version() {
     jq -r --arg name "$name" '.[$name].version // "0.0.0"' "$VERSIONS_FILE"
 }
 
-# Fonction pour comparer les versions (ex: 1.2.0 > 1.1.9)
 version_greater() {
-    printf '%s\n%s' "$1" "$2" | sort -V | tail -n 1 | grep -q "^$1$"
+    # Retourne 1 (false) si les versions sont identiques
+    if [ "$1" = "$2" ]; then
+        return 1
+    fi
+    # Sinon, compare en utilisant sort -V
+    if [ "$(printf '%s\n%s' "$1" "$2" | sort -V | tail -n 1)" = "$1" ]; then
+        return 0
+    else
+        return 1
+    fi
 }
+
 
 # Fonction principale : Build, ZIP et Upload
 process_module() {
@@ -72,10 +79,11 @@ process_module() {
     local_version=$(get_local_version "$name")
 
     # Vérification si la version doit être mise à jour
-    if [[ -n "$local_version" && ! $(version_greater "$version" "$local_version") ]]; then
+    if [[ -n "$local_version" ]] && ! version_greater "$version" "$local_version"; then
         echo "✅ La version $version est inférieure ou égale à $local_version."
         return
     fi
+
 
     # Vérifier si c'est un module Go et compiler si nécessaire
     if [[ -f "$module_path/go.mod" ]]; then
@@ -116,9 +124,12 @@ process_module() {
     if [[ $? -eq 0 ]]; then
         echo "✅ Upload réussi pour $name ($version)"
         
-        # Mettre à jour le fichier .versions.json
-        jq --arg name "$name" --arg version "$version" \
-            '.[$name] = { "version": $version }' "$VERSIONS_FILE" > "${VERSIONS_FILE}.tmp"
+        # Calculer le SHA256 du fichier ZIP
+        sha=$(sha256sum "$zip_file" | awk '{print $1}')
+        
+        # Mettre à jour le fichier .versions.json avec la version et le SHA
+        jq --arg name "$name" --arg version "$version" --arg sha "$sha" \
+            '.[$name] = { "version": $version, "sha": $sha }' "$VERSIONS_FILE" > "${VERSIONS_FILE}.tmp"
 
         mv "${VERSIONS_FILE}.tmp" "$VERSIONS_FILE"
         echo "✅ Fichier .versions.json mis à jour avec succès !"
@@ -126,6 +137,7 @@ process_module() {
     else
         echo "❌ Échec de l'upload pour $name"
     fi
+
 }
 
 # Parcours des modules dans les catégories official, community, collections
