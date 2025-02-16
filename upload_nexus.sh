@@ -2,8 +2,6 @@
 
 # Configuration de Nexus Repository
 NEXUS_URL="https://pkg.aidalinfo.fr/repository/minibackup-modules"
-NEXUS_USERNAME="uploader"  
-NEXUS_PASSWORD="" 
 
 # Définition du répertoire des modules
 BASE_DIR="$(dirname "$(realpath "$0")")"
