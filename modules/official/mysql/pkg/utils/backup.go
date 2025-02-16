@@ -9,18 +9,17 @@ import (
 )
 
 // BackupMySQL performs a MySQL dump using the mysqldump command-line tool.
-func BackupMySQL(name string, config BackupArgs) ([]string, error) {
+func BackupMySQL(name string, config BackupArgs, logger *ModuleLogger) ([]string, error) {
 	if config.Mysql.Host == "" || config.Mysql.User == "" {
 		return []string{}, fmt.Errorf("invalid MySQL configuration: missing required fields (Host: %s, User: %s)", config.Mysql.Host, config.Mysql.User)
 	}
-	// fmt.Printf("Starting backup for %s\n", name)
-	// fmt.Printf("Using MySQL configuration: %+v\n", config)
-
-	// Format de la date pour nommer le dossier de backup
+	logger.Info(fmt.Sprintf("Starting backup for %s", name))
+	logger.Info(fmt.Sprintf("Using MySQL configuration: %+v", config))
 	date := time.Now().Format("20060102_150405")
 	parentDir := fmt.Sprintf("%s/%s_mysql_backup_%s", config.Path, name, date)
 
 	if err := os.MkdirAll(parentDir, 0755); err != nil {
+		logger.Error(fmt.Sprintf("Failed to create backup parent directory: %v", err))
 		return []string{}, fmt.Errorf("failed to create backup parent directory: %w", err)
 	}
 
@@ -32,6 +31,7 @@ func BackupMySQL(name string, config BackupArgs) ([]string, error) {
 
 		result, err := dumpAllDatabases(name, config, outputFile)
 		if err != nil {
+			logger.Error(fmt.Sprintf("Failed to dump all databases: %v", err))
 			return nil, fmt.Errorf("failed to dump all databases: %w", err)
 		}
 
