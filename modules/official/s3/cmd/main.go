@@ -16,7 +16,7 @@ Ce module permet de gérer les backups et la restauration.
 }
 func main() {
 	rootCmd.AddCommand(commands.BackupCmd())
-	// rootCmd.AddCommand(commands.RestoreCmd())
+	rootCmd.AddCommand(commands.RestoreCmd())
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
