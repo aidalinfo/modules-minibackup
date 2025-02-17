@@ -1,4 +1,4 @@
-mongo:
+s3:
   bin: module-s3-mb
   version: 0.1.0
   type: s3
