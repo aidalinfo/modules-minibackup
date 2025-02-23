@@ -15,7 +15,7 @@ func RestoreCmd() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "restore [name] [backupPath] [args]",
-		Short: "Exécute une restauration MySQL avec des paramètres JSON",
+		Short: "Exécute une restauration sqlite avec des paramètres JSON",
 		Args:  cobra.ExactArgs(3),
 		Run: func(cmd *cobra.Command, args []string) {
 			name := args[0]
