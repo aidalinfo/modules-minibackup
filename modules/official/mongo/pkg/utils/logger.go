@@ -29,20 +29,22 @@ func NewModuleLogger() *ModuleLogger {
 
 func (ml *ModuleLogger) Error(message string) {
 	ts := time.Now().Format(time.RFC3339)
-	// fmt.Println(fmt.Sprintf("%s ERROR: %s", ts, message))
-	ml.Logs.Error = append(ml.Logs.Error, fmt.Sprintf("%s ERROR: %s", ts, message))
+	fmt.Printf("%s ERROR: %s\n", ts, message)
+	// ml.Logs.Error = append(ml.Logs.Error, fmt.Sprintf("%s ERROR: %s", ts, message))
 }
 
 func (ml *ModuleLogger) Info(message string) {
 	ts := time.Now().Format(time.RFC3339)
+	fmt.Printf("%s INFO: %s\n", ts, message)
 	// fmt.Println(fmt.Sprintf("%s INFO: %s", ts, message))
-	ml.Logs.Info = append(ml.Logs.Info, fmt.Sprintf("%s INFO: %s", ts, message))
+	// ml.Logs.Info = append(ml.Logs.Info, fmt.Sprintf("%s INFO: %s", ts, message))
 }
 
 func (ml *ModuleLogger) Debug(message string) {
 	ts := time.Now().Format(time.RFC3339)
-	// fmt.Println(fmt.Sprintf("%s DEBUG: %s", ts, message))
-	ml.Logs.Debug = append(ml.Logs.Debug, fmt.Sprintf("%s DEBUG: %s", ts, message))
+	fmt.Printf("%s DEBUG: %s\n", ts, message)
+	// fmt.Printf(fmt.Sprintf("%s DEBUG: %s", ts, message))
+	// ml.Logs.Debug = append(ml.Logs.Debug, fmt.Sprintf("%s DEBUG: %s", ts, message))
 }
 
 // SetResult définit le résultat final du module.

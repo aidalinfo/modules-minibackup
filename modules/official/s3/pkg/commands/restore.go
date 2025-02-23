@@ -34,22 +34,10 @@ func RestoreCmd() *cobra.Command {
 			err := utils.RestoreS3(backupPath, restoreArgs, name, loggerModule)
 			if err != nil {
 				loggerModule.Error(fmt.Sprintf("Erreur lors de la restauration : %v", err))
-				log.Fatalf("❌ Erreur lors de la restauration : %v", err)
-				loggerModule.SetResult(false)
-				jsonOutput, err := loggerModule.JSON()
-				if err != nil {
-					log.Fatalf("Erreur lors de la sérialisation du logger en JSON: %v", err)
-				}
-				fmt.Println(jsonOutput)
+				fmt.Println(err)
 				return
 			}
-			loggerModule.Info("Restauration S3 exécutée avec succès.")
-			loggerModule.SetResult(true)
-			jsonOutput, err := loggerModule.JSON()
-			if err != nil {
-				log.Fatalf("Erreur lors de la sérialisation du logger en JSON: %v", err)
-			}
-			fmt.Println(jsonOutput)
+			fmt.Println(true)
 		},
 	}
 

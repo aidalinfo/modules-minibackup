@@ -14,13 +14,13 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
-func BackupRemoteS3(name string, config BackupArgs, logger *ModuleLogger) ([]string, error) {
+func BackupRemoteS3(name string, config BackupArgs, logger *ModuleLogger) (string, error) {
 	logger.Debug(fmt.Sprintf("Information de connexion S3 : %v", config.S3))
 
 	// Création du fichier credentials AWS
 	err := AwsCredentialFileCreateFunc(config.S3.ACCESS_KEY, config.S3.SECRET_KEY, name)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	// Formatage du dossier parent avec timestamp
@@ -35,13 +35,13 @@ func BackupRemoteS3(name string, config BackupArgs, logger *ModuleLogger) ([]str
 		s3client, err := NewS3Manager("", config.S3.Region, config.S3.Endpoint, name, config.S3.PathStyle)
 		if err != nil {
 			logger.Error(fmt.Sprintf("Erreur lors de l'initialisation du gestionnaire S3 : %v", err))
-			return nil, err
+			return "", err
 		}
 
 		buckets, err := s3client.ListBuckets()
 		if err != nil {
 			logger.Error(fmt.Sprintf("Erreur lors de la récupération de la liste des buckets S3 : %v", err))
-			return nil, err
+			return "", err
 		}
 
 		bucketsToBackup = buckets
@@ -76,7 +76,7 @@ func BackupRemoteS3(name string, config BackupArgs, logger *ModuleLogger) ([]str
 	}
 
 	logger.Info(fmt.Sprintf("Backup copié avec succès depuis les buckets S3 : %v", allBucketPath))
-	return []string{parentDir}, nil
+	return parentDir, nil
 }
 
 // UploadEmptyFolder crée un "dossier" vide dans S3

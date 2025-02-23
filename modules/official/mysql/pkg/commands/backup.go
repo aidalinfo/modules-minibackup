@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"modules-minibackup/internal/mysql/pkg/utils"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -34,16 +35,10 @@ func BackupCmd() *cobra.Command {
 			if err != nil {
 				loggerModule.Error(fmt.Sprintf("Erreur lors du backup : %v", err))
 				log.Fatalf("❌ Erreur lors du backup : %v", err)
+				os.Exit(1)
 			}
 			loggerModule.Info("Backup MySQL exécuté avec succès.")
-
-			loggerModule.SetResult(result)
-
-			jsonOutput, err := loggerModule.JSON()
-			if err != nil {
-				log.Fatalf("Erreur lors de la sérialisation du logger en JSON: %v", err)
-			}
-			fmt.Println(jsonOutput)
+			fmt.Println(result)
 		},
 	}
 

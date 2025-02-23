@@ -1,0 +1,8 @@
+mongo:
+  bin: module-fs-mb
+  version: 0.1.0
+  type: fs
+  enable: true
+  metadata:
+    author: Ninapepite
+    description: Module de sauvegarde Filesystem

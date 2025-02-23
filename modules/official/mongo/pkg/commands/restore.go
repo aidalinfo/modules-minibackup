@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"modules-minibackup/internal/mongo/pkg/utils"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -35,21 +36,10 @@ func RestoreCmd() *cobra.Command {
 			if err != nil {
 				loggerModule.Error(fmt.Sprintf("Erreur lors de la restauration : %v", err))
 				log.Fatalf("❌ Erreur lors de la restauration : %v", err)
-				loggerModule.SetResult(false)
-				jsonOutput, err := loggerModule.JSON()
-				if err != nil {
-					log.Fatalf("Erreur lors de la sérialisation du logger en JSON: %v", err)
-				}
-				fmt.Println(jsonOutput)
-				return
+				os.Exit(1)
 			}
-			loggerModule.Info("Restauration MySQL exécutée avec succès.")
-			loggerModule.SetResult(true)
-			jsonOutput, err := loggerModule.JSON()
-			if err != nil {
-				log.Fatalf("Erreur lors de la sérialisation du logger en JSON: %v", err)
-			}
-			fmt.Println(jsonOutput)
+			loggerModule.Info("Restauration Mongo exécutée avec succès.")
+			fmt.Println(true)
 		},
 	}
 

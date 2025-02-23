@@ -36,13 +36,14 @@ func BackupCmd() *cobra.Command {
 				log.Fatalf("❌ Erreur lors du backup : %v", err)
 			}
 			loggerModule.Info("Backup S3 exécuté avec succès.")
-			loggerModule.SetResult(result)
+			fmt.Println(result)
+			// loggerModule.SetResult(result)
 
-			jsonOutput, err := loggerModule.JSON()
-			if err != nil {
-				log.Fatalf("Erreur lors de la sérialisation du logger en JSON: %v", err)
-			}
-			fmt.Println(jsonOutput)
+			// jsonOutput, err := loggerModule.JSON()
+			// if err != nil {
+			// 	log.Fatalf("Erreur lors de la sérialisation du logger en JSON: %v", err)
+			// }
+			// fmt.Println(jsonOutput)
 		},
 	}
 
