@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"modules-minibackup/internal/mysql/pkg/utils"
-	"os"
+	"modules-minibackup/internal/s3/pkg/utils"
 
 	"github.com/spf13/cobra"
 )
@@ -15,7 +14,7 @@ func BackupCmd() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "backup [name] [args]",
-		Short: "Exécute un backup MySQL avec des paramètres JSON",
+		Short: "Exécute un backup S3 avec des paramètres JSON",
 		Args:  cobra.ExactArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
 			name := args[0]
@@ -31,14 +30,20 @@ func BackupCmd() *cobra.Command {
 			}
 			loggerModule.Info("Arguments de backup parsés avec succès.")
 
-			result, err := utils.BackupMySQL(name, backupArgs, loggerModule)
+			result, err := utils.BackupRemoteS3(name, backupArgs, loggerModule)
 			if err != nil {
 				loggerModule.Error(fmt.Sprintf("Erreur lors du backup : %v", err))
 				log.Fatalf("❌ Erreur lors du backup : %v", err)
-				os.Exit(1)
 			}
-			loggerModule.Info("Backup MySQL exécuté avec succès.")
+			loggerModule.Info("Backup S3 exécuté avec succès.")
 			fmt.Println(result)
+			// loggerModule.SetResult(result)
+
+			// jsonOutput, err := loggerModule.JSON()
+			// if err != nil {
+			// 	log.Fatalf("Erreur lors de la sérialisation du logger en JSON: %v", err)
+			// }
+			// fmt.Println(jsonOutput)
 		},
 	}
 

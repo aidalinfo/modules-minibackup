@@ -1,5 +1,14 @@
 {
   "official": {
+    "mongo": {
+      "version": "0.1.0",
+      "type": "mongo",
+      "path": "modules/official/mongo/mongo.md",
+      "metadata": {
+        "author": "Ninapepite",
+        "description": "Module de sauvegarde MongoDB"
+      }
+    },
     "mysql": {
       "version": "0.9.3",
       "type": "mysql",

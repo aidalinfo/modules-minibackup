@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"modules-minibackup/internal/mysql/pkg/utils"
+	"modules-minibackup/internal/mongo/pkg/utils"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -15,7 +15,7 @@ func BackupCmd() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "backup [name] [args]",
-		Short: "Exécute un backup MySQL avec des paramètres JSON",
+		Short: "Exécute un backup Mongo avec des paramètres JSON",
 		Args:  cobra.ExactArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
 			name := args[0]
@@ -31,7 +31,7 @@ func BackupCmd() *cobra.Command {
 			}
 			loggerModule.Info("Arguments de backup parsés avec succès.")
 
-			result, err := utils.BackupMySQL(name, backupArgs, loggerModule)
+			result, err := utils.BackupMongoDB(name, backupArgs, loggerModule)
 			if err != nil {
 				loggerModule.Error(fmt.Sprintf("Erreur lors du backup : %v", err))
 				log.Fatalf("❌ Erreur lors du backup : %v", err)

@@ -1,0 +1,8 @@
+sqlite:
+  bin: module-sqlite-mb
+  version: 0.1.0
+  type: sqlite
+  enable: true
+  metadata:
+    author: Ninapepite
+    description: Module de sauvegarde Filesystem
