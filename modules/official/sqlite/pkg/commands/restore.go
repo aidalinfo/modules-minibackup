@@ -28,7 +28,7 @@ func RestoreCmd() *cobra.Command {
 				log.Fatalf("❌ Erreur de parsing JSON: %v", err)
 			}
 
-			err := utils.RestoreSqlite(backupPath, restoreArgs)
+			err := utils.RestoreSqlite(name, restoreArgs, backupPath)
 			if err != nil {
 				log.Fatalf("❌ Erreur lors de la restauration : %v", err)
 				os.Exit(1)
