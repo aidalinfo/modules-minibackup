@@ -1,12 +1,21 @@
 {
   "official": {
+    "filesystem": {
+      "version": "0.1.0",
+      "type": "fs",
+      "path": "modules/official/filesystem/filesystem.md",
+      "metadata": {
+        "author": "Ninapepite",
+        "description": "Module de sauvegarde Filesystem"
+      }
+    },
     "mongo": {
       "version": "0.1.0",
-      "type": "mongo",
+      "type": "s3",
       "path": "modules/official/mongo/mongo.md",
       "metadata": {
         "author": "Ninapepite",
-        "description": "Module de sauvegarde MongoDB"
+        "description": "Module de sauvegarde S3"
       }
     },
     "mysql": {
@@ -16,6 +25,24 @@
       "metadata": {
         "author": "Ninapepite",
         "description": "Module de sauvegarde MySQL"
+      }
+    },
+    "s3": {
+      "version": "0.1.0",
+      "type": "s3",
+      "path": "modules/official/s3/s3.md",
+      "metadata": {
+        "author": "Ninapepite",
+        "description": "Module de sauvegarde S3"
+      }
+    },
+    "sqlite": {
+      "version": "0.1.0",
+      "type": "sqlite",
+      "path": "modules/official/sqlite/sqlite.md",
+      "metadata": {
+        "author": "Ninapepite",
+        "description": "Module de sauvegarde Filesystem"
       }
     }
   },

@@ -2,5 +2,21 @@
   "mysql": {
     "version": "0.9.3",
     "sha": "e702e1f373bb7180a06e248090bc3474389e7e5ef476a274e9c2470d14794b51"
+  },
+  "filesystem": {
+    "version": "0.1.0",
+    "sha": "4440441acf23c54fa775a1efebd1b7bfd297475cf31a41a4ef10155d41b1bd04"
+  },
+  "mongo": {
+    "version": "0.1.0",
+    "sha": "5fedd3f2ee7e55b9a12936cef8c411afc6d2626fd80aa34a130d01ede3b3615c"
+  },
+  "s3": {
+    "version": "0.1.0",
+    "sha": "250b7a2ec28761a0dd68cd4a68c3c9182ef31b841f9634f38f83bf317bbdb6c1"
+  },
+  "sqlite": {
+    "version": "0.1.0",
+    "sha": "4d4aca2687cc38d3225b5f52f1896578efe4babbb53702f58f942c1b878147c3"
   }
 }
