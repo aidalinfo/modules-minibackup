@@ -1,7 +1,7 @@
-filesystem:
-  bin: module-fs-mb
+sqlite:
+  bin: module-sqlite-mb
   version: 0.1.0
-  type: fs
+  type: sqlite
   enable: true
   metadata:
     author: Ninapepite
