@@ -4,7 +4,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 // CopyDir recursively copies all of the files within the directory given in
@@ -47,14 +46,14 @@ func CopyDir(dst, src string) error {
 			return nil
 		}
 
-		if strings.HasPrefix(filepath.Base(path), ".") {
-			// Skip any dot files
-			if info.IsDir() {
-				return filepath.SkipDir
-			} else {
-				return nil
-			}
-		}
+		// if strings.HasPrefix(filepath.Base(path), ".") {
+		// 	// Skip any dot files
+		// 	if info.IsDir() {
+		// 		return filepath.SkipDir
+		// 	} else {
+		// 		return nil
+		// 	}
+		// }
 
 		// The "path" has the src prefixed to it. We need to join our
 		// destination with the path without the src on it.
@@ -94,12 +93,14 @@ func CopyDir(dst, src string) error {
 		}
 
 		// If we have a file, copy the contents.
+		if err := os.MkdirAll(filepath.Dir(dstPath), 0755); err != nil {
+				return err
+		}
 		srcF, err := os.Open(path)
 		if err != nil {
 			return err
 		}
 		defer srcF.Close()
-
 		dstF, err := os.Create(dstPath)
 		if err != nil {
 			return err
