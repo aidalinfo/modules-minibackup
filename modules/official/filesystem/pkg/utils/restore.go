@@ -5,85 +5,76 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
-// RestoreFolder restaure un ou plusieurs fichiers/dossiers depuis un chemin donné vers `config.Folder[0]`.
+// RestoreFolder restaure les dossiers définis dans config.Fs.Paths.
 func RestoreFolder(restorePath string, config BackupArgs) error {
+	fmt.Printf("Début de la restauration depuis : %s\n", restorePath)
+	fmt.Printf("Chemins à restaurer : %v\n", config.Fs.Paths)
 
-	// Assurez-vous que config.Folder contient au moins une destination valide
-	if len(config.Fs.Paths) == 0 || config.Fs.Paths[0] == "" {
-		return fmt.Errorf("aucun chemin de destination défini dans config.Folder")
-	}
+	for _, destPath := range config.Fs.Paths {
+		os.Mkdir(destPath, 0755)
 
-	destination := config.Fs.Paths[0]
+		baseName := filepath.Base(destPath)
+		pattern := filepath.Join(restorePath, baseName+"_*")
+		fmt.Printf("Recherche de sauvegarde pour %s avec le pattern %s\n", destPath, pattern)
 
-	fmt.Sprintf("Starting folder restore from %s to %s", restorePath, destination)
-
-	// Vérifier si le dossier de destination existe, sinon le créer
-	err := os.MkdirAll(destination, 0755)
-	if err != nil {
-		return fmt.Errorf("erreur lors de la création du dossier de destination %s : %v", destination, err)
-	}
-
-	// Restaurer le contenu de `restorePath` dans `destination`
-	info, err := os.Stat(restorePath)
-	if err != nil {
-		return fmt.Errorf("erreur lors de l'accès au chemin source %s : %v", restorePath, err)
-	}
-
-	if info.IsDir() {
-		// Restaurer tout le contenu d'un dossier source
-		err = restoreFolderContents(restorePath, destination)
+		matches, err := filepath.Glob(pattern)
 		if err != nil {
-			return fmt.Errorf("erreur lors de la restauration du dossier %s vers %s : %v", restorePath, destination, err)
+			return fmt.Errorf("erreur lors de la recherche avec Glob pour %s : %v", pattern, err)
 		}
-		fmt.Sprintf("Dossier %s restauré avec succès vers %s", restorePath, destination)
-	} else {
-		// Restaurer un fichier individuel
-		destPath := filepath.Join(destination, filepath.Base(restorePath))
-		err = copyFile(restorePath, destPath)
-		if err != nil {
-			return fmt.Errorf("erreur lors de la restauration du fichier %s vers %s : %v", restorePath, destPath, err)
+		if len(matches) == 0 {
+			fmt.Printf("Aucune sauvegarde trouvée pour %s\n", destPath)
+			continue
 		}
-		fmt.Sprintf("Fichier %s restauré avec succès vers %s", restorePath, destPath)
-	}
+		sourcePath := matches[0]
 
-	return nil
-}
-
-// restoreFolderContents copie récursivement le contenu d'un dossier source vers un dossier destination.
-func restoreFolderContents(srcPath, destPath string) error {
-	err := filepath.Walk(srcPath, func(path string, info os.FileInfo, err error) error {
+		fmt.Printf("Restauration de %s vers %s\n", sourcePath, destPath)
+		err = os.MkdirAll(destPath, 0755)
 		if err != nil {
-			return fmt.Errorf("erreur lors de l'accès au chemin %s : %v", path, err)
+			return fmt.Errorf("erreur création dossier destination %s : %v", destPath, err)
 		}
 
-		// Calculer le chemin destination relatif
-		relativePath, err := filepath.Rel(srcPath, path)
-		if err != nil {
-			return fmt.Errorf("erreur lors du calcul du chemin relatif pour %s : %v", path, err)
-		}
-		targetPath := filepath.Join(destPath, relativePath)
-
-		if info.IsDir() {
-			// Créer les sous-dossiers
-			err = os.MkdirAll(targetPath, 0755)
+		err = filepath.Walk(sourcePath, func(path string, info os.FileInfo, err error) error {
 			if err != nil {
-				return fmt.Errorf("erreur lors de la création du dossier %s : %v", targetPath, err)
+				if os.IsPermission(err) || strings.Contains(err.Error(), "permission denied") {
+					fmt.Printf("Permission refusée, skip : %s\n", path)
+					return nil
+				}
+				return err
 			}
-		} else {
-			// Copier les fichiers
-			err = copyFile(path, targetPath)
+
+			rel, err := filepath.Rel(sourcePath, path)
 			if err != nil {
-				return fmt.Errorf("erreur lors de la copie du fichier %s vers %s : %v", path, targetPath, err)
+				return fmt.Errorf("erreur calcul chemin relatif : %v", err)
 			}
+			targetPath := filepath.Join(destPath, rel)
+
+			if info.IsDir() {
+				if mkErr := os.MkdirAll(targetPath, info.Mode()); mkErr != nil {
+					if os.IsPermission(mkErr) {
+						fmt.Printf("Permission refusée sur dossier, skip : %s\n", targetPath)
+						return nil
+					}
+					return mkErr
+				}
+				return nil
+			}
+
+			if cpErr := copyFile(path, targetPath); cpErr != nil {
+				if os.IsPermission(cpErr) || strings.Contains(cpErr.Error(), "permission denied") {
+					fmt.Printf("Permission refusée sur fichier, skip : %s\n", path)
+					return nil
+				}
+				return cpErr
+			}
+			return nil
+		})
+		if err != nil {
+			return fmt.Errorf("erreur lors de la restauration de %s : %v", destPath, err)
 		}
-
-		return nil
-	})
-
-	if err != nil {
-		return fmt.Errorf("erreur lors de la restauration du dossier %s : %v", srcPath, err)
+		fmt.Printf("Restauration terminée pour %s\n", destPath)
 	}
 
 	return nil
@@ -91,26 +82,35 @@ func restoreFolderContents(srcPath, destPath string) error {
 
 // copyFile copie un fichier d'une source vers une destination.
 func copyFile(srcPath, destPath string) error {
-	// Ouvrir le fichier source
 	srcFile, err := os.Open(srcPath)
 	if err != nil {
-		return fmt.Errorf("erreur lors de l'ouverture du fichier source %s : %v", srcPath, err)
+		if os.IsPermission(err) {
+			fmt.Printf("Permission refusée ouverture : %s, skip\n", srcPath)
+			return nil
+		}
+		return fmt.Errorf("erreur ouverture source %s : %v", srcPath, err)
 	}
 	defer srcFile.Close()
 
-	// Créer le fichier de destination
 	destFile, err := os.Create(destPath)
 	if err != nil {
-		return fmt.Errorf("erreur lors de la création du fichier destination %s : %v", destPath, err)
+		if os.IsPermission(err) {
+			fmt.Printf("Permission refusée création : %s, skip\n", destPath)
+			return nil
+		}
+		return fmt.Errorf("erreur création destination %s : %v", destPath, err)
 	}
 	defer destFile.Close()
 
-	// Copier le contenu du fichier
 	_, err = io.Copy(destFile, srcFile)
 	if err != nil {
-		return fmt.Errorf("erreur lors de la copie de %s vers %s : %v", srcPath, destPath, err)
+		if os.IsPermission(err) {
+			fmt.Printf("Permission refusée copy : %s, skip\n", srcPath)
+			return nil
+		}
+		return fmt.Errorf("erreur copie de %s vers %s : %v", srcPath, destPath, err)
 	}
 
-	fmt.Sprintf("Fichier %s copié avec succès vers %s", srcPath, destPath)
+	fmt.Printf("Fichier %s copié avec succès vers %s\n", srcPath, destPath)
 	return nil
 }
