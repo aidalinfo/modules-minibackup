@@ -4,8 +4,8 @@
     "sha": "e702e1f373bb7180a06e248090bc3474389e7e5ef476a274e9c2470d14794b51"
   },
   "filesystem": {
-    "version": "0.1.0",
-    "sha": "4440441acf23c54fa775a1efebd1b7bfd297475cf31a41a4ef10155d41b1bd04"
+    "version": "0.9.0",
+    "sha": "a7e6b38f596b422572a33a73e3ec13ac5d29be50fcf83c997e683f2092175d93"
   },
   "mongo": {
     "version": "0.1.0",
