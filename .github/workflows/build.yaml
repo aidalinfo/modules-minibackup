@@ -38,8 +38,8 @@ jobs:
       - name: Upload du fichier .index.json vers Nexus
         run: |
           curl -u "${{ secrets.NEXUS_USERNAME }}:${{ secrets.NEXUS_PASSWORD }}" \
-               --upload-file .index.json \
-               "https://pkg.aidalinfo.fr/repository/minibackup/index.json"
+               -F "file=@.index.json" \
+               "https://pkg.aidalinfo.fr/repository/minibackup/"
         
       - name: Commit du nouveau fichier .index.json et .versions.json sur GitHub
         uses: EndBug/add-and-commit@v9
