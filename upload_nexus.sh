@@ -120,8 +120,9 @@ process_module() {
     # Upload vers Nexus (ZIP)
     echo "🚀 Upload du fichier sur Nexus..."
     curl -u "$NEXUS_USERNAME:$NEXUS_PASSWORD" \
-        --upload-file "$zip_file" \
-        "$NEXUS_URL/$category/$name.zip"
+        -F "file=@$zip_file" \
+        -H "Content-Type: multipart/form-data" \
+        "$NEXUS_URL/$category/"
 
     if [[ $? -eq 0 ]]; then
         echo "✅ Upload réussi pour $name ($version)"
