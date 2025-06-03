@@ -51,7 +51,6 @@ version_greater() {
     fi
 }
 
-
 # Fonction principale : Build, ZIP et Upload
 process_module() {
     local category=$1
@@ -84,7 +83,6 @@ process_module() {
         return
     fi
 
-
     # Vérifier si c'est un module Go et compiler si nécessaire
     if [[ -f "$module_path/go.mod" ]]; then
         echo "🛠️ Détection d'un projet Go, compilation..."
@@ -115,6 +113,10 @@ process_module() {
         return
     fi
 
+    # Supprimer l'artefact existant sur Nexus pour écraser la version antérieure
+    echo "⏳ Suppression de l'ancienne version sur Nexus (si existante)..."
+    curl -u "$NEXUS_USERNAME:$NEXUS_PASSWORD" -X DELETE "$NEXUS_URL/$category/$name.zip" >/dev/null 2>&1
+
     # Upload vers Nexus (ZIP)
     echo "🚀 Upload du fichier sur Nexus..."
     curl -u "$NEXUS_USERNAME:$NEXUS_PASSWORD" \
@@ -137,7 +139,6 @@ process_module() {
     else
         echo "❌ Échec de l'upload pour $name"
     fi
-
 }
 
 # Parcours des modules dans les catégories official, community, collections
