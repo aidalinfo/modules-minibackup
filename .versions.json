@@ -1,1 +1,22 @@
-{}
+{
+  "filesystem": {
+    "version": "0.9.0",
+    "sha": "6e8da13fb801a6833a781ee5a5237d4b3028dc3d67658b9ae83fc11e1cc7ae44"
+  },
+  "mongo": {
+    "version": "0.1.0",
+    "sha": "ce54ac20a613e177c1e65ce32c74c1cd7fb3395996899425100149f1fba43d8f"
+  },
+  "mysql": {
+    "version": "0.9.3",
+    "sha": "a905482dc0495536cf83e376914f2de46e7f9cb3d1f3f1c5c2fe1c9263985d25"
+  },
+  "s3": {
+    "version": "0.1.0",
+    "sha": "bcb0cc9e749553c22c6872b02fbb2cf35699af84630d769c23e2cf4e986ee87e"
+  },
+  "sqlite": {
+    "version": "0.1.0",
+    "sha": "a219f6b47df2f59110dd1ee431c312bce55a2dca91a86e3571a8b693306ea25f"
+  }
+}
