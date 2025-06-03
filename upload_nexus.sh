@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration de Nexus Repository
-NEXUS_URL="https://pkg.aidalinfo.fr/repository/minibackup"
+NEXUS_URL="https://pkg.aidalinfo.fr/repository/minibackup-modules"
 
 # Définition du répertoire des modules
 BASE_DIR="$(dirname "$(realpath "$0")")"
@@ -51,6 +51,7 @@ version_greater() {
     fi
 }
 
+
 # Fonction principale : Build, ZIP et Upload
 process_module() {
     local category=$1
@@ -83,6 +84,7 @@ process_module() {
         return
     fi
 
+
     # Vérifier si c'est un module Go et compiler si nécessaire
     if [[ -f "$module_path/go.mod" ]]; then
         echo "🛠️ Détection d'un projet Go, compilation..."
@@ -113,17 +115,11 @@ process_module() {
         return
     fi
 
-    # Supprimer l'artefact existant sur Nexus pour écraser la version antérieure
-    echo "⏳ Suppression de l'ancienne version sur Nexus (si existante)..."
-    curl -u "$NEXUS_USERNAME:$NEXUS_PASSWORD" -X DELETE "$NEXUS_URL/$category/$name.zip" >/dev/null 2>&1
-
     # Upload vers Nexus (ZIP)
     echo "🚀 Upload du fichier sur Nexus..."
     curl -u "$NEXUS_USERNAME:$NEXUS_PASSWORD" \
-        -F "raw.directory=$category" \
-        -F "raw.asset1=@$zip_file" \
-        -F "raw.asset1.filename=$(basename $zip_file)" \
-        "$NEXUS_URL/"
+        --upload-file "$zip_file" \
+        "$NEXUS_URL/$category/$name.zip"
 
     if [[ $? -eq 0 ]]; then
         echo "✅ Upload réussi pour $name ($version)"
@@ -141,6 +137,7 @@ process_module() {
     else
         echo "❌ Échec de l'upload pour $name"
     fi
+
 }
 
 # Parcours des modules dans les catégories official, community, collections
