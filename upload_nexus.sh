@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration de Nexus Repository
-NEXUS_URL="https://pkg.aidalinfo.fr/repository/minibackup-modules"
+NEXUS_URL="https://pkg.aidalinfo.fr/repository/minibackup"
 
 # Définition du répertoire des modules
 BASE_DIR="$(dirname "$(realpath "$0")")"

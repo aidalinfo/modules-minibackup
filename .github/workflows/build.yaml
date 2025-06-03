@@ -39,7 +39,7 @@ jobs:
         run: |
           curl -u "${{ secrets.NEXUS_USERNAME }}:${{ secrets.NEXUS_PASSWORD }}" \
                --upload-file .index.json \
-               "https://pkg.aidalinfo.fr/repository/minibackup-modules/index.json"
+               "https://pkg.aidalinfo.fr/repository/minibackup/index.json"
         
       - name: Commit du nouveau fichier .index.json et .versions.json sur GitHub
         uses: EndBug/add-and-commit@v9
